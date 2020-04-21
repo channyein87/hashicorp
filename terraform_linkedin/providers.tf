@@ -1,4 +1,4 @@
 provider "aws" {
-    profile = "default"
+    profile = "cnnn"
     region = "ap-southeast-2"
 }

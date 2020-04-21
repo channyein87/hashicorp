@@ -1,0 +1,14 @@
+---
+- name: Install Jenkins 
+  hosts: all
+  become: true
+  vars:
+    ssh_use_pam: true # to allow access with our key on ec2
+    jenkins_hostname: localhost
+    ansible_remote_tmp: /tmp/ansible
+    jenkins_plugins: [ansicolor]
+
+  roles:
+    - geerlingguy.jenkins
+    - geerlingguy.ansible-role-packer
+    - geerlingguy.ansible

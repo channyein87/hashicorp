@@ -1,0 +1,70 @@
+{
+  "variables": {
+    "user_profile": "sandpit",
+    "aws_region": "ap-southeast-2",
+    "instance_type": "t3.medium",
+    "security_group_id": "sg-0a253edeabf6323e7",
+    "subnet_id": "subnet-306aad47",
+    "aws_access_key": "AKIAZE34QLKIGMVTLXXC",
+    "aws_secret_key": "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"
+  },
+  "builders": [
+    {
+      "name": "packer-chko",
+      "type": "amazon-ebs",
+      "region": "{{ user `aws_region`}}",
+      "run_tags": {
+        "Name": "packer-chko-{{isotime \"20060102030405\"}}"
+      },
+      "tags": {
+        "Name": "packer-chko-{{isotime \"20060102030405\"}}"
+      },
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "*Windows_Server-2016-English-Full-Base*",
+          "root-device-type": "ebs"
+        },
+        "owners": ["801119661308"],
+        "most_recent": true
+      },
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 80,
+          "volume_type": "gp2",
+          "delete_on_termination": true,
+          "encrypted": false
+        }
+      ],
+      "ami_name": "packer-chko-{{isotime \"20060102030405\"}}",
+      "instance_type": "{{user `instance_type`}}",
+      "user_data_file": "./bootstrap_win.ps1",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_password": "SuperS3cr3t!!!!",
+      "winrm_insecure": true,
+      "winrm_use_ssl": true,
+      "security_group_id": "{{ user `security_group_id` }}",
+      "subnet_id": "{{ user `subnet_id` }}",
+      "access_key": "{{ user `aws_access_key` }}",
+      "secret_key": "{{ user `aws_secret_key` }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "powershell",
+      "scripts": "./disable-uac.ps1"
+    },
+    {
+      "type": "windows-restart"
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\InitializeInstance.ps1 -Schedule",
+        "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\SysprepInstance.ps1 -NoShutdown"
+      ]
+    }
+  ]
+}

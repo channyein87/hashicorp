@@ -5,3 +5,4 @@ terraform_linkedin/.terraform/
 */packer.zip
 .terraform/*
 */.terraform
+*/.DS_Store
